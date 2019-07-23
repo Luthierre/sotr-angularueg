@@ -1,0 +1,87 @@
+<div class="container">
+    <div class="ui-g">
+      <form  autocomplete="off" (ngSubmit)="pesquisar()">
+      <div class="ui-g-12">
+        <h1>Pesquisa de motoristas</h1>
+      </div>
+
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Nome</label>
+        <input pInputText type="text" [(ngModel)]="filtro.nome" name="nome">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>CPF</label>
+        <input pInputText type="text" [(ngModel)]="filtro.cpf" name="cpf">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+        <label>Câmpus</label>
+        <input pInputText type="text" [(ngModel)]="filtro.campus" name="campus">
+      </div>
+      <div class="ui-g-6">
+          <label style="display: block">Data Nascimento</label>
+          <p-calendar dateFormat="dd/mm/yy" [inputStyle]="{ width: '95px' }"
+          name="nascimentoInicio" [(ngModel)]="filtro.dataNascimentoDe" [locale]="pt"></p-calendar>
+
+        <label>até</label>
+        <p-calendar dateFormat="dd/mm/yy" [inputStyle]="{ width: '95px' }"
+          name="nascimentoFim" [(ngModel)]="filtro.dataNascimentoAte" [locale]="pt"></p-calendar>
+        </div>
+      <div class="ui-g-12">
+        <button pButton label="Pesquisar" type="submit"></button>
+      </div>
+    </form>
+  </div>
+  <div class="ui-g">
+      <div class="ui-g-12">
+        <p-table [value]="condutores" [responsive]="true" [paginator]="true" [rows]="filtro.itensPorPagina"
+        [lazy]="true" [totalRecords]="totalRegistros"
+        (onLazyLoad)="aoMudarPagina($event)" #tabela>
+          <ng-template pTemplate="header">
+            <tr>
+              <th class="col-nome-header">Nome</th>
+              <th>CPF</th>
+              <th>Nascimento</th>
+              <th>CNH</th>
+              <th>Vencimento CNH</th>
+              <th *ngIf="auth.jwtPayload.idCampus === 1">Câmpus</th>
+              <th class="col-acoes-header">Ações</th>
+
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-condutor>
+            <tr>
+              <td class="col-nome">{{condutor.nome}}</td>
+              <td class="col-data">{{condutor.cpf}}</td>
+              <td class="col-data">{{condutor.dataNascimento | date:'dd/MM/yyyy'}}</td>
+              <td class="col-data">{{condutor.numeroCnh}}</td>
+              <td class="col-data">{{condutor.dataVencimentoCnh | date:'dd/MM/yyyy'}}</td>
+              <td class="col-data" *ngIf="auth.jwtPayload.idCampus === 1">{{condutor.campus.nome}}</td>
+
+              <td class="col-acoes">
+                <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top"
+                  class="ui-button-success" [routerLink]="['/motoristas', condutor.codigo]"
+                  [disabled]="!auth.temPermissao('ROLE_CADASTRAR_VEICULOS_CONDUTOR')"></button>
+
+                <button pButton icon="fa-trash" pTooltip="Excluir"
+                  tooltipPosition="top" class="ui-button-danger"
+                  (click)="confirmarExclusao(condutor)"
+                  [disabled]="!auth.temPermissao('ADMINISTRADOR')"></button>
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5">
+                Nenhum condutor encontrado
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="ui-g-12">
+        <button pButton label="Novo Motorista" icon="fa-id-badge" routerLink="/motoristas/novo"
+        [disabled]="!auth.temPermissao('ROLE_CADASTRAR_VEICULOS_CONDUTOR')"></button>
+      </div>
+    </div>
+  </div>

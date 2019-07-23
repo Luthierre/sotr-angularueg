@@ -1,0 +1,58 @@
+<div class="container">
+    <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <h1>{{ editando ? 'Edição de' : 'Novo' }} Veiculo</h1>
+        </div>
+
+        <div class="ui-g-12 ui-fluid">
+          <label>Fabricante</label>
+          <input pInputText type="text" [(ngModel)]="veiculo.fabricante" name="fabricante" required minlength="2" #fabricante="ngModel">
+          <app-message [control]="fabricante" error="required" text="Informe um fabricante"></app-message>
+          <app-message [control]="fabricante" error="minlength" text="Mínimo de  {{fabricante.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+            <label>Modelo</label>
+            <input pInputText type="text" [(ngModel)]="veiculo.modelo" name="modelo" required minlength="3" #modelo="ngModel">
+            <app-message [control]="modelo" error="required" text="Informe um modelo"></app-message>
+            <app-message [control]="modelo" error="minlength" text="Mínimo de  {{modelo.errors?.minlength?.requiredLength}} caracteres"></app-message>
+          </div>
+          <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+            <label>Câmpus</label>
+            <p-autoComplete [(ngModel)]="veiculo.campus" name="campus" [suggestions]="campus" (completeMethod)="pesquisaCampus($event)" field="nome" [size]="30"
+              placeholder="Câmpus" [minLength]="3" ></p-autoComplete>
+          </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>Placa</label>
+          <p-inputMask mask="aaa-9999"  name="placa" [(ngModel)]="veiculo.placa" required #placa="ngModel" placeholder="AAA-9999"
+          [disabled]="editando"> </p-inputMask>
+          <app-message [control]="placa" error="required" text="Informe uma placa"></app-message>
+        </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>Ano</label>
+          <p-inputMask mask="9999-9999"  name="ano" [(ngModel)]="veiculo.ano" required #ano="ngModel" placeholder="2000-2001"
+           > </p-inputMask>
+          <app-message [control]="ano" error="required" text="Informe o ano"></app-message>
+        </div>
+
+        <div class="ui-g-12 ui-fluid">
+          <label>Observação</label>
+          <textarea pInputTextarea rows="3" name="observacao" [(ngModel)]="veiculo.observacao"></textarea>
+        </div>
+
+
+
+        <div class="ui-g-12">
+            <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" ></button>
+            <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+            <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/veiculos"
+            [disabled]="!auth.temPermissao('ROLE_PESQUISAR_VEICULOS_CONDUTOR')"
+            ></button>
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>

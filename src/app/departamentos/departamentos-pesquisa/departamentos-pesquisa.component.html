@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="ui-g">
+    <form autocomplete="off" (ngSubmit)="pesquisar()">
+      <div class="ui-g-12">
+        <h1>Pesquisa de departamentos</h1>
+      </div>
+
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Descrição</label>
+        <input pInputText type="text" [(ngModel)]="filtro.descricao" name="descricao">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+        <label>Câmpus</label>
+        <input pInputText type="text" [(ngModel)]="filtro.campus" name="campus">
+      </div>
+      <div class="ui-g-12">
+        <button pButton label="Pesquisar" type="submit"></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-table [value]="departamentos" [responsive]="true" [paginator]="true"
+        [rows]="filtro.itensPorPagina" [lazy]="true" [totalRecords]="totalRegistros"
+        (onLazyLoad)="aoMudarPagina($event)" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Descrição</th>
+            <th *ngIf="auth.jwtPayload.idCampus === 1">Campus</th>
+            <th class="col-acoes-header">Ações</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-departamento>
+          <tr>
+            <td>{{departamento.descricao}}</td>
+            <td class="col-nome-centro" *ngIf="auth.jwtPayload.idCampus === 1">{{departamento.campus.nome}}</td>
+            <td class="col-acoes">
+              <button pButton icon="fa-pencil" pTooltip="Editar"
+                tooltipPosition="top" class="ui-button-success"
+                [routerLink]="['/departamentos', departamento.codigo]"
+                [disabled]="!auth.temPermissao('ROLE_CADASTRAR_DEPARTAMENTO')"></button>
+
+              <button pButton icon="fa-trash" pTooltip="Excluir"
+                tooltipPosition="top" class="ui-button-danger"
+                (click)="confirmarExclusao(departamento)"
+                [disabled]="!auth.temPermissao('ADMINISTRADOR')"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="2">
+              Nenhum departamento encontrado
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="ui-g-12">
+      <button pButton label="Novo departamento" icon="fa-briefcase" routerLink="/departamentos/novo"
+      [disabled]="!auth.temPermissao('ROLE_CADASTRAR_DEPARTAMENTO')"></button>
+    </div>
+  </div>
+</div>

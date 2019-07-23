@@ -1,0 +1,57 @@
+<div class="container">
+    <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <h1>{{ editando ? 'Edição de' : 'Novo' }} Motoristas</h1>
+        </div>
+
+        <div class="ui-g-12 ui-fluid">
+          <label>Nome</label>
+          <input pInputText type="text" [(ngModel)]="condutor.nome" name="nome" required minlength="5" #nome="ngModel">
+          <app-message [control]="nome" error="required" text="Informe um nome"></app-message>
+          <app-message [control]="nome" error="minlength" text="Mínimo de  {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+            <label>CPF</label>
+            <p-inputMask mask="999.999.999-99"  name="cpf" [(ngModel)]="condutor.cpf" required cpf #cpf="ngModel" [cpf]="condutor.cpf" placeholder="999.999.999-99"
+          > </p-inputMask>
+          <app-message [control]="cpf" error="required" text="Informe um CPF"></app-message>
+          <app-message [control]="cpf" error="cpf" text="Informe um CPF valido"></app-message>
+          </div>
+          <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+            <label>Câmpus</label>
+            <p-autoComplete [(ngModel)]="condutor.campus" name="campus" [suggestions]="campus" (completeMethod)="pesquisaCampus($event)" field="nome" [size]="30"
+              placeholder="Câmpus" [minLength]="3" ></p-autoComplete>
+          </div>
+          <div class="ui-g-12 ui-md-6 ui-fluid">
+            <label>Nascimento</label>
+            <p-calendar name="nascimento" dateFormat="dd/mm/yy" [inline]="false" [readonlyInput]="false" [showIcon]="true"
+              [(ngModel)]="condutor.dataNascimento" #nascimento="ngModel" required [monthNavigator]="true" [yearNavigator]="true"
+              yearRange="1920:2040" [locale]="pt"></p-calendar>
+            <app-message [control]="nascimento" error="required" text="Informe o nascimento"></app-message>
+          </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>CNH</label>
+          <p-inputMask mask="99999999999"  name="cnh" [(ngModel)]="condutor.numeroCnh" required #cnh="ngModel" placeholder="99999999999"> </p-inputMask>
+          <app-message [control]="cnh" error="required" text="Informe o número da cnh"></app-message>
+        </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>Vencimento CNH</label>
+          <p-calendar name="vencimento" dateFormat="dd/mm/yy" [inline]="false" [readonlyInput]="false" [showIcon]="true"
+              [(ngModel)]="condutor.dataVencimentoCnh" #vencimento="ngModel" required [monthNavigator]="true" [yearNavigator]="true"
+              yearRange="2018:2060" [locale]="pt"></p-calendar>
+          <app-message [control]="vencimento" error="required" text="Informe o vencimento"></app-message>
+        </div>
+
+
+        <div class="ui-g-12">
+            <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" ></button>
+            <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+            <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/motoristas"
+            [disabled]="!auth.temPermissao('ROLE_PESQUISAR_VEICULOS_CONDUTOR')"
+            ></button>
+        </div>
+      </div>
+    </form>
+  </div>

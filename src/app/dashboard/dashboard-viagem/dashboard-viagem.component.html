@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <h1>Viagens</h1>
+    </div>
+
+    
+    <div class="ui-g-4 ui-md-4 ">
+      <p-card title="Motoristas" styleClass="ui-card-shadow">
+        <div>Cadastro, edição e pesquisa de motoristas</div>
+        <p-footer>
+          <button pButton type="button" pTooltip="Pesquisar motoristas" tooltipPosition="top"  icon="fa-id-badge" routerLink="/motoristas"></button>
+          <button pButton type="button" pTooltip="Cadastrar motoristas" tooltipPosition="top"  icon="fa-plus" class="ui-button-success"
+            routerLink="/motoristas/novo"></button>
+        </p-footer>
+      </p-card>
+    </div>
+
+    <div class="ui-g-4 ui-md-4">
+      <p-card title="Veiculos" styleClass="ui-card-shadow">
+        <div>Pesquisa, edição e cadastro dos veiculos</div>
+        <p-footer>
+          <button pButton type="button" pTooltip="Pesquisar veiculos" tooltipPosition="top"  icon="fa-car" routerLink="/veiculos"></button>
+          <button pButton type="button" pTooltip="Cadastrar veiculos" tooltipPosition="top"  icon="fa-plus" class="ui-button-success"
+          routerLink="/veiculos/novo"></button>
+        </p-footer>
+      </p-card>
+    </div>
+
+    <div class="ui-g-4 ui-md-4">
+      <p-card title="Ordem de tráfego" styleClass="ui-card-shadow">
+        <div>Movimentações das ordens de tráfego</div>
+        <p-footer>
+          <button pButton type="button" pTooltip="Pesquisar ordem" tooltipPosition="top"  icon="fa-list-ol" routerLink="/ordem-trafegos"></button>
+          <button pButton type="button" pTooltip="Cadastrar ordem" tooltipPosition="top"  icon="fa-plus" class="ui-button-success"
+            routerLink="/ordem-trafegos/novo"></button>
+            <button pButton type="button" pTooltip="Relatórios" tooltipPosition="top" icon="fa-print" class="ui-button-info"
+            routerLink="/ordem-trafegos/relatorios"></button>
+        </p-footer>
+      </p-card>
+    </div>
+    <div class="ui-g-5 ">
+      <p-panel header="Tota de Viagens no mês por veiculo">
+        <p-chart type="pie" [data]="pieChartData"></p-chart>
+      </p-panel>
+    </div>
+    <div class="ui-g-7">
+      <p-panel header="Viagens no mês por Campus">
+        <p-chart type="line" [data]="lineChartData"></p-chart>
+      </p-panel>
+    </div>
+  </div>
+</div>

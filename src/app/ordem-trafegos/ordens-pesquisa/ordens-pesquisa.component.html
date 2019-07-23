@@ -1,0 +1,110 @@
+<div class="container">
+    <div class="ui-g">
+      <form  autocomplete="off" (ngSubmit)="pesquisar()">
+      <div class="ui-g-12">
+        <h1>Pesquisa ordens de tráfego</h1>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Solicitante</label>
+        <input pInputText type="text" [(ngModel)]="filtro.solicitante" name="solicitante">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Condutor</label>
+        <input pInputText type="text" [(ngModel)]="filtro.condutor" name="condutor">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>CPF</label>
+        <input pInputText type="text" [(ngModel)]="filtro.cpf" name="cpf">
+      </div>
+
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>Modelo</label>
+          <input pInputText type="text" [(ngModel)]="filtro.modelo" name="modelo">
+        </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid">
+          <label>Placa</label>
+          <input pInputText type="text" [(ngModel)]="filtro.placa" name="placa">
+        </div>
+
+        <div class="ui-g-6">
+          <label style="display: block">Data da Solicitação</label>
+          <p-calendar dateFormat="dd/mm/yy" [inputStyle]="{ width: '85px' }"
+          name="solicitacaoInicio" [(ngModel)]="filtro.dataSolicitacaoDe"></p-calendar>
+
+        <label>até</label>
+        <p-calendar dateFormat="dd/mm/yy" [inputStyle]="{ width: '85px' }"
+          name="solicitacaoFim" [(ngModel)]="filtro.dataSolicitacaoAte"></p-calendar>
+        </div>
+
+        <div class="ui-g-6 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+          <label>Campus</label>
+          <input pInputText type="text" [(ngModel)]="filtro.campus" name="campus">
+        </div>
+      <div class="ui-g-12">
+        <button pButton label="Pesquisar" type="submit"></button>
+      </div>
+    </form>
+  </div>
+  <div class="ui-g">
+      <div class="ui-g-12">
+        <p-table [value]="ordens" [responsive]="true" [paginator]="true" [rows]="filtro.itensPorPagina"
+        [lazy]="true" [totalRecords]="totalRegistros"
+        (onLazyLoad)="aoMudarPagina($event)" #tabela>
+          <ng-template pTemplate="header" >
+            <tr>
+              <th class="col-nome-header">Solicitante</th>
+              <th>Modelo</th>
+              <th>Placa</th>
+              <th>Condutor</th>
+              <th>Data Solicitação</th>  
+              <th *ngIf="auth.jwtPayload.idCampus === 1">Campus</th>            
+              <th class="col-acoes-ordem-header">Ações</th>
+
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-ordem>
+            <tr>
+              <td class="col-nome">{{ordem.solicitante}}</td>
+              <td class="col-data">{{ordem.veiculo}}</td>
+              <td class="col-data">{{ordem.placa}}</td>
+              <td class="col-nome">{{ordem.condutor}}</td>
+              <td class="col-data">{{ordem.dataSolicitacao | date: 'dd/MM/yyyy'}}</td>
+              <td class="col-nome-centro" *ngIf="auth.jwtPayload.idCampus === 1">{{ordem.campus}}</td>
+              <td class="col-acoes-ordem">
+                  <button pButton icon="fa-print" pTooltip="Imprimir Ordem" tooltipPosition="top"
+                  class="ui-button-info" (click)="prepararRelatorioOrdem(ordem.codigo)"
+                  [disabled]="!auth.temPermissao('ROLE_CADASTRAR_ORDEM')"></button>
+                <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top"
+                  class="ui-button-success" [routerLink]="['/ordem-trafegos', ordem.codigo]"
+                  [disabled]="!auth.temPermissao('ROLE_CADASTRAR_ORDEM')"
+                  *ngIf="ordem.ativo"></button>
+
+                <button pButton icon="fa-trash" pTooltip="Excluir"
+                  tooltipPosition="top" class="ui-button-danger"
+                  (click)="confirmarExclusao(ordem)"
+                  *ngIf="ordem.ativo"></button>
+                  <p-toggleButton  [(ngModel)]="ordem.ativo" onIcon="fa-bell" offIcon="fa-bell-slash-o" onLabel="" offLabel=""   [pTooltip]="ordem.ativo ? 'Inativar' : 'Ativar'"
+                  tooltipPosition="top" (onChange)="alternarStatus(ordem, $event)"                  
+                  ></p-toggleButton > 
+              </td>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6">
+                Nenhuma ordem encontrada
+              </td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+
+      <div class="ui-g-12">
+        <button pButton label="Novo Ordem" icon="fa-id-badge" routerLink="/ordem-trafegos/novo"
+        [disabled]="!auth.temPermissao('ROLE_CADASTRAR_ORDEM')"></button>
+      </div>
+    </div>
+
+
+  </div>

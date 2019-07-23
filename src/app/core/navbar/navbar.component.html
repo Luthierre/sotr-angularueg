@@ -1,0 +1,30 @@
+<nav class="navbar">
+
+    <div class="container">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <a href="javascript:;" class="navbar-toggle" (click)="exibindoMenu = !exibindoMenu" pTooltip="Menu de acesso"><i class="fa fa-bars"></i></a>
+          <a routerLink="inicio" class="navbar-toggle" pTooltip="Inicio"><i class="fa fa-home"></i></a>
+          <a routerLink="agenda" class="navbar-toggle" pTooltip="Agenda, contatos e departamentos"
+            *ngIf="auth.temPermissao('ROLE_DASHBOARD_AGENDA')"><i class="fa fa-calendar"></i></a>
+          <a routerLink="viagem" class="navbar-toggle" pTooltip="Viagens, motoristas e veiculos"
+          *ngIf="auth.temPermissao('ROLE_DASHBOARD_VIAGEM')"><i class="fa fa-bus"></i></a>
+          <a href="javascript:;" class="navbar-toggle"pTooltip="Sair do sistema" ><i class="fa fa-power-off" (click)="logout()"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <ul class="navbar-menu" [hidden]="!exibindoMenu">
+      <li class="navbar-usuario">{{auth.jwtPayload?.nome}}</li>
+      <li class="navbar-campus">Campus: {{auth.jwtPayload?.campus}}</li>
+      <li class="navbar-menuitem" routerLinkActive="ativo"><a routerLink="/inicio">Inicio</a></li>
+      <li class="navbar-menuitem" routerLinkActive="ativo"
+        *ngIf="auth.temPermissao('ROLE_DASHBOARD_AGENDA')"><a routerLink="/agenda">Agenda</a></li>
+      <li class="navbar-menuitem" routerLinkActive="ativo"
+        *ngIf="auth.temPermissao('ROLE_DASHBOARD_VIAGEM')"><a routerLink="/viagem">Viagens</a></li>
+      <li class="navbar-menuitem" routerLinkActive="ativo"
+      *ngIf="auth.temPermissao('ROLE_PESQUISAR_USUARIO')"><a routerLink="/usuarios">Usuários</a></li>
+      <li class="navbar-menuitem"><a href="javascript:;" (click)="logout()">Logout</a></li>
+    </ul>
+
+  </nav>

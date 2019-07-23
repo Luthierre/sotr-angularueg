@@ -1,0 +1,57 @@
+<div class="container">
+  <div class="ui-g">
+    <form autocomplete="off" (ngSubmit)="pesquisar()">
+      <div class="ui-g-12">
+        <h1>Pesquisa de campus</h1>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Nome</label>
+        <input pInputText type="text" [(ngModel)]="filtro.nome" name="descricao">
+      </div>
+      <div class="ui-g-12">
+        <button pButton label="Pesquisar" type="submit"></button>
+      </div>
+    </form>
+  </div>
+
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-table [value]="campus" [responsive]="true" [paginator]="true"
+        [rows]="filtro.itensPorPagina" [lazy]="true" [totalRecords]="totalRegistros"
+        (onLazyLoad)="aoMudarPagina($event)" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nome</th>
+            <th class="col-acoes-header">Ações</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-campo>
+          <tr>
+            <td>{{campo.nome}}</td>
+            <td class="col-acoes">
+              <button pButton icon="fa-pencil" pTooltip="Editar"
+                tooltipPosition="top" class="ui-button-success"
+                [routerLink]="['/campus', campo.codigo]"
+                [disabled]="!auth.temPermissao('ROLE_CADASTRAR_CAMPUS')"
+                ></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="2">
+              Nenhum campus encontrado
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div class="ui-g-12">
+      <button pButton label="Novo" icon="fa-fort-awesome"
+        routerLink="/campus/novo" [disabled]="!auth.temPermissao('ROLE_CADASTRAR_CAMPUS')">
+      </button>
+    </div>
+  </div>
+</div>

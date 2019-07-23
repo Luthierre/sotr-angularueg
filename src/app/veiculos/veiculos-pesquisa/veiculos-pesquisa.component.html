@@ -1,0 +1,85 @@
+<div class="container">
+  <div class="ui-g">
+    <form  autocomplete="off" (ngSubmit)="pesquisar()">
+    <div class="ui-g-12">
+      <h1>Pesquisa de veiculos</h1>
+    </div>
+
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Modelo</label>
+      <input pInputText type="text" [(ngModel)]="filtro.modelo" name="modelo">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Fabricante</label>
+      <input pInputText type="text" [(ngModel)]="filtro.fabricante" name="fabricante">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Placa</label>
+      <input pInputText type="text" [(ngModel)]="filtro.placa" name="placa">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+      <label>Campus</label>
+      <input pInputText type="text" [(ngModel)]="filtro.campus" name="campus">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Ano</label>
+        <input pInputText type="text" [(ngModel)]="filtro.ano" name="ano">
+      </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Observação</label>
+      <input pInputText type="text" [(ngModel)]="filtro.observacao" name="observacao">
+    </div>
+    <div class="ui-g-12">
+      <button pButton label="Pesquisar" type="submit"></button>
+    </div>
+  </form>
+</div>
+<div class="ui-g">
+    <div class="ui-g-12">
+      <p-table [value]="veiculos" [responsive]="true" [paginator]="true" [rows]="filtro.itensPorPagina"
+      [lazy]="true" [totalRecords]="totalRegistros"
+      (onLazyLoad)="aoMudarPagina($event)" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Modelo</th>
+            <th>Ano</th>
+            <th>Placa</th>
+            <th>Campus</th>
+            <th class="col-acoes-header">Ações</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-veiculo>
+          <tr>
+            <td>{{veiculo.modelo}}</td>
+            <td class="col-data">{{veiculo.ano}}</td>
+            <td class="col-data">{{veiculo.placa}}</td>
+            <td class="col-data">{{veiculo.campus.nome}}</td>
+            <td class="col-acoes">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top"
+                class="ui-button-success" [routerLink]="['/veiculos', veiculo.codigo]"
+                [disabled]="!auth.temPermissao('ROLE_CADASTRAR_VEICULOS_CONDUTOR')"></button>
+
+              <button pButton icon="fa-trash" pTooltip="Excluir"
+                tooltipPosition="top" class="ui-button-danger"
+                (click)="confirmarExclusao(veiculo)"
+                [disabled]="!auth.temPermissao('AMINISTRADOR')"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5">
+              Nenhum veiculo encontrado
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="ui-g-12">
+      <button pButton label="Novo veiculo" icon="fa-address-book" routerLink="/veiculos/novo"
+      [disabled]="!auth.temPermissao('ROLE_CADASTRAR_VEICULOS_CONDUTOR')"></button>
+    </div>
+  </div>
+</div>

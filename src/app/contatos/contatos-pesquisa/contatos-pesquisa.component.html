@@ -1,0 +1,96 @@
+<div class="container">
+  <div class="ui-g">
+    <form  autocomplete="off" (ngSubmit)="pesquisar()">
+    <div class="ui-g-12">
+      <h1>Pesquisa de contatos</h1>
+    </div>
+
+    <div class="ui-g-12 ui-fluid">
+      <label>Nome</label>
+      <input pInputText type="text" [(ngModel)]="filtro.nome" name="nome">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Email</label>
+      <input pInputText type="text" [(ngModel)]="filtro.email" name="email">
+    </div>
+    <div class="ui-g-12 ui-md-6 ui-fluid">
+      <label>Departamento</label>
+      <input pInputText type="text" [(ngModel)]="filtro.departamento" name="departamento">
+    </div>
+    <div class="ui-g-12 ui-md-12 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+      <label>Câmpus</label>
+      <input pInputText type="text" [(ngModel)]="filtro.campus" name="campus">
+    </div>
+    <div class="ui-g-12 ui-md-12 ui-fluid">
+      <label>Observação</label>
+      <input pInputText type="text" [(ngModel)]="filtro.observacao" name="observacao">
+    </div>
+    <div class="ui-g-12">
+      <button pButton label="Pesquisar" type="submit"></button>
+    </div>
+  </form>
+</div>
+<div class="ui-g">
+    <div class="ui-g-12">
+      <p-table [value]="contatos" [responsive]="true" [paginator]="true" [rows]="filtro.itensPorPagina"
+      [lazy]="true" [totalRecords]="totalRegistros"
+      (onLazyLoad)="aoMudarPagina($event)" #tabela>      
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th class="col-nome-header">Departamento</th>
+            <th class="col-nome-header" *ngIf="auth.jwtPayload.idCampus === 1">Câmpus</th>
+            <th class="col-acoes-header">Telefones</th>
+            <th class="col-acoes-header">Ações</th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contato>
+          <tr>
+            <td>{{contato.nome}}</td>
+            <td>{{contato.email}}</td>
+            <td class="col-nome-centro">{{contato.departamento}}</td>
+            <td class="col-nome-centro" *ngIf="auth.jwtPayload.idCampus === 1">{{contato.campus}}</td>
+            <td class="col-acoes">
+              <button pButton icon="fa-address-book" pTooltip="Telefones" tooltipPosition="top" class="ui-button-warning"
+                (click)="prepararDialogTelefones(contato)"></button>
+
+            </td>
+            <td class="col-acoes">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top"
+                class="ui-button-success" [routerLink]="['/contatos', contato.codigo]"
+                [disabled]="!auth.temPermissao('ROLE_CADASTRAR_CONTATO')"></button>
+
+              <button pButton icon="fa-trash" pTooltip="Excluir"
+                tooltipPosition="top" class="ui-button-danger"
+                (click)="confirmarExclusao(contato)"
+                [disabled]="!auth.temPermissao('ADMINISTRADOR')"></button>
+            </td>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="5">
+              Nenhum contato encontrado
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+
+    <div class="ui-g-12">
+      <button pButton label="Novo Contato" icon="fa-address-book" routerLink="/contatos/novo"
+      [disabled]="!auth.temPermissao('ROLE_CADASTRAR_CONTATO')"></button>
+    </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-dialog header="Telefones" [(visible)]="exibirDialogTelefones" [modal]="true" [responsive]="false"
+      [draggable]="false"
+      [baseZIndex]="10">
+        <app-contatos-pesquisa-telefones [numeros]="telefones"></app-contatos-pesquisa-telefones>
+       </p-dialog>
+    </div>
+  </div>
+</div>

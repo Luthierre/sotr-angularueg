@@ -1,0 +1,25 @@
+<div class="container">
+  <form #f="ngForm" autocomplete="off"  (ngSubmit)="salvar(f)">
+    <div class="ui-g">
+      <div class="ui-g-12">
+        <h1>{{ editando ? 'Edição de' : 'Novo' }} Campus</h1>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Nome</label>
+        <input pInputText type="text" name="nome" [(ngModel)]="campus.nome" #nome="ngModel" required minlength="5">
+        <app-message [control]="nome" error="required" text="Informe um nome"></app-message>
+        <app-message [control]="nome" error="minlength" text="Mínimo de  {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+      </div>
+
+      <div class="ui-g-12">
+          <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" ></button>
+        <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+        <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/campus"></button>
+      </div>
+
+    </div>
+
+  </form>
+
+</div>

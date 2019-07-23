@@ -1,0 +1,96 @@
+<div class="container">
+    <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <h1>{{ editando ? 'Edição de' : 'Novo' }} Usuário</h1>
+        </div>
+
+        <div class="ui-g-5 ui-fluid">
+          <label>Nome</label>
+          <input pInputText type="text" name="nome" [(ngModel)]="usuario.nome" required minlength="5" #nome="ngModel">
+          <app-message [control]="nome" error="required" text="Informe um nome"></app-message>
+          <app-message [control]="nome" error="minlength" text="Mínimo de  {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-5 ui-fluid">
+          <label>Email</label>
+          <input pInputText type="text" name="email" [(ngModel)]="usuario.email" required email #email="ngModel" [disabled]="editando">
+          <app-message [control]="email" error="required" text="Informe um nome"></app-message>
+          <app-message [control]="email" error="email" text="Email incorreto"></app-message>
+        </div>
+        <div class="ui-g-12 ui-md-6 ui-fluid" *ngIf="auth.jwtPayload.idCampus === 1">
+          <label>Câmpus</label>
+          <p-autoComplete [(ngModel)]="usuario.campus" name="campus" [suggestions]="campus" (completeMethod)="pesquisaCampus($event)" field="nome" [size]="30"
+            placeholder="Câmpus" [minLength]="3" ></p-autoComplete>
+        </div>
+        <div class="ui-g-2 ui-fluid">
+          <label>Senha</label>
+          <button pButton pTooltip="Senha" tooltipPosition="top" type="button"  icon="fa-key" (click)="prepararFormularioSenha()">
+        </button>
+        </div>
+
+
+
+        <div class="ui-g-12">
+        <p-table [columns]="colunas" [value]="permissoes" [(selection)]="usuario.permissoes" dataKey="codigo"
+        [responsive]="true" [paginator]="true" [rows]="7">
+            <ng-template pTemplate="header" let-colunas>
+                <tr>
+                    <th style="width: 2.25em">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th *ngFor="let col of colunas">
+                        {{col.header}}
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-rowData let-columns="columns">
+                <tr [pSelectableRow]="rowData">
+                    <td>
+                        <p-tableCheckbox [value]="rowData"></p-tableCheckbox>
+                    </td>
+                    <td *ngFor="let col of columns">
+                        {{rowData[col.field]}}
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+      </div>
+      <div class="ui-g-12">
+        <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" [disabled]="!auth.temPermissao('ROLE_CADASTRAR_USUARIO')"></button>
+        <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+        <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info"routerLink="/usuarios"
+        [disabled]="!auth.temPermissao('ROLE_PESQUISAR_USUARIO')"></button>
+      </div>
+      </div>
+    </form>
+    <div class="ui-g">
+    <p-dialog header="Senhas" [(visible)]="exibirFormularioSenhas" modal="modal">
+      <form #frmSenhas="ngForm" autocomplete="off" (ngSubmit)="confirmarSenhas(propriedade1, propriedade2)">
+        <div class="ui-g-6 ui-fluid">
+          <label>Senha</label>
+
+          <input type="password" pPassword [(ngModel)]="propriedade1" name="propriedade1" required maxlength="15" minlength="5"
+          promptLabel="Digite sua senha" weakLabel="Senha fraca demais" mediumLabel="Melhorou!"  strongLabel="Senha perfeita!" />
+
+        </div>
+
+        <div class="ui-g-6 ui-fluid">
+          <label>Confirme a senha </label>
+          <input type="password" pPassword [(ngModel)]="propriedade2" name="propriedade2" required required maxlength="15" minlength="5"
+          promptLabel="Confirme sua senha" weakLabel="Senha fraca demais" mediumLabel="Melhorou!"  strongLabel="Senha perfeita!" />
+        </div>
+
+        <div class="ui-g-12">
+          <button pButton type="submit" label="Confirmar" [disabled]="frmSenhas.invalid"></button>
+        </div>
+      </form>
+    </p-dialog>
+  </div>
+
+  </div>
+
+
+
+
+

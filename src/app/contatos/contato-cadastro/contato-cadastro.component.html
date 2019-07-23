@@ -1,0 +1,47 @@
+<div class="container">
+  <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+    <div class="ui-g">
+      <div class="ui-g-12">
+        <h1>{{ editando ? 'Edição de' : 'Novo' }} Contato</h1>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Nome</label>
+        <input pInputText type="text" [(ngModel)]="contato.nome" name="nome" required minlength="5" #nome="ngModel">
+        <app-message [control]="nome" error="required" text="Informe um nome"></app-message>
+        <app-message [control]="nome" error="minlength" text="Mínimo de  {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Email</label>
+        <input pInputText type="text" name="email" [(ngModel)]="contato.email">
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Departamento</label>
+        <p-autoComplete [(ngModel)]="contato.departamento" name="departamento" [suggestions]="departamentos" (completeMethod)="pesquisaDepartamentos($event)" field="descricao" [size]="30"
+          placeholder="Departamentos" [minLength]="3"></p-autoComplete>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Observação</label>
+        <textarea pInputTextarea rows="3" name="observacao" [(ngModel)]="contato.observacao"></textarea>
+      </div>
+
+      <div class="ui-g-12">
+          <p-panel header="Telefones">
+            <app-contato-cadastro-telefone [telefones]="contato.telefones"></app-contato-cadastro-telefone>
+          </p-panel>
+        </div>
+
+      <div class="ui-g-12">
+          <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" ></button>
+          <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+          <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/contatos"
+          [disabled]="!auth.temPermissao('ROLE_PESQUISAR_CONTATO')"
+          ></button>
+      </div>
+
+    </div>
+
+  </form>
+
+</div>

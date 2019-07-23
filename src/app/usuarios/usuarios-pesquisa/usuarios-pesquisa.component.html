@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="ui-g">
+    <form autocomplete="off" (ngSubmit)="pesquisar()">
+      <div class="ui-g-12">
+        <h1>Usuários</h1>
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+          <label>Nome</label>
+          <input pInputText type="text" [(ngModel)]="filtro.nome" name="nome">
+        </div>
+        <div class="ui-g-12 ui-fluid">
+          <label>Email</label>
+          <input pInputText type="text" [(ngModel)]="filtro.email" name="email">
+        </div>
+
+      <div class="ui-g-12">
+        <button pButton type="submit" label="Pesquisar" [disabled]="!auth.temPermissao('ROLE_PESQUISAR_USUARIO')"></button>
+      </div>
+    </form>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-table [value]="usuarios" [responsive]="true" [paginator]="true"
+      [rows]="filtro.itensPorPagina" [lazy]="true" [totalRecords]="totalRegistros"
+      (onLazyLoad)="aoMudarPagina($event)" #tabela>
+        <ng-template pTemplate="header">
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th class="col-data-header ">Permissoes</th>
+            <th class="col-acoes-header">Ações</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-usuario>
+          <tr>
+            <td class="col-data">{{usuario.nome}}</td>
+            <td class="col-data">{{usuario.email}}</td>
+            <td class="col-acoes">
+              <button pButton icon="fa-thumbs-up" pTooltip="Permissões"
+                tooltipPosition="top" class="ui-button-danger"
+                (click)="prepararDialogPermissoes(usuario)"></button>
+
+              </td>
+              <td class="col-acoes">
+                  <button pButton icon="fa-pencil" pTooltip="Editar"
+                    tooltipPosition="top" class="ui-button-success"
+                    [routerLink]="['/usuarios', usuario.codigo]"
+                    [disabled]="!auth.temPermissao('ROLE_CADASTRAR_USUARIO')"></button>
+
+                  <button pButton icon="fa-trash" pTooltip="Excluir"
+                tooltipPosition="top" class="ui-button-danger"
+                (click)="confirmarExclusao(usuario)"
+                [disabled]="!auth.temPermissao('ROLE_REMOVER_USUARIO')"></button>
+              </td>
+          </tr>
+        </ng-template>
+        </p-table>
+    </div>
+    <div class="ui-g-12">
+        <button pButton label="Novo usuário" icon="fa-user-plus" routerLink="/usuarios/novo"
+        [disabled]="!auth.temPermissao('ROLE_CADASTRAR_USUARIO')"></button>
+      </div>
+  </div>
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-dialog header="Permissões do usuário" [(visible)]="exibindoPermissoesUsuario"
+        [responsive]="true" modal="modal">
+
+            <ul>
+                <li *ngFor="let p of usuario.permissoes" style="text-align: left; font-size:12px; font-weight:bold;">
+                    {{p.descricao}}
+                </li>
+            </ul>
+
+      </p-dialog>
+    </div>
+  </div>
+
+</div>

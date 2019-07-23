@@ -1,0 +1,72 @@
+<div class="ui-g">
+  <div class="ui-g-12">
+    <button pButton label="Novo" icon="fa-plus" type="button" class="ui-button-secondary" (click)="preprarTelefone()"></button>
+  </div>
+
+  <div class="ui-g-12">
+    <p-table [value]="telefones" [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Tipo</th>
+          <th>DDD</th>
+          <th>Número</th>
+          <th class="col-acoes-header"></th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-telefone let-rowIndex="rowIndex">
+        <tr>
+          <td>{{ telefone.tipo }}</td>
+          <td>{{ telefone.area }}</td>
+          <td>{{ telefone.numero }}</td>
+          <td class="col-acoes">
+            <button pButton icon="fa-pencil" type="button"
+            pTooltip="Editar" tooltipPosition="top"
+            (click)="prepararEdicaoTelefone(telefone, rowIndex)"></button>
+
+          <button pButton icon="fa-trash" type="button"
+            pTooltip="Excluir" tooltipPosition="top"
+            (click)="removerTelefone(rowIndex)" [disabled]="!auth.temPermissao('ADMINISTRADOR')"></button>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4">
+            Nenhum telefone cadastrado
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+
+<p-dialog header="Novo Telefone" [(visible)]="exbindoFormularioTelefone" modal="modal">
+  <form #frmTelefone="ngForm" autocomplete="off" (ngSubmit)="confirmarTelefone(frmTelefone)">
+    <div class="ui-g-12 ui-fluid">
+      <label>Tipo</label>
+      <p-dropdown [options]="tipos" placeholder="Selecione um tipo" [autoWidth]="false" [filter]="true"  name="tipo" required [(ngModel)]="telefone.tipo">
+      </p-dropdown>
+
+    </div>
+
+    <div class="ui-g-1 ui-fluid">
+      <label>DDD</label>
+      <p-inputMask mask="(99)" name="ddd" [(ngModel)]="telefone.area" required #ddd="ngModel"></p-inputMask>
+      <app-message [control]="ddd" error="required" text="Informe o DDD"></app-message>
+    </div>
+
+    <div class="ui-g-6 ui-fluid">
+      <label>Número</label>
+
+      <p-inputMask mask="9?9999-9999"  name="numero" [(ngModel)]="telefone.numero" required #numero="ngModel"> </p-inputMask>
+      <app-message [control]="numero" error="required" text="Informe o numero"></app-message>
+    </div>
+
+    <div class="ui-g-12">
+      <button pButton type="submit" label="Confirmar" [disabled]="frmTelefone.invalid"></button>
+    </div>
+  </form>
+</p-dialog>

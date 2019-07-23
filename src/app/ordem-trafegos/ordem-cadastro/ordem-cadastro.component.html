@@ -1,0 +1,58 @@
+<div class="container">
+  <form #f="ngForm" autocomplete="off" (ngSubmit)="salvar(f)">
+    <div class="ui-g">
+      <div class="ui-g-6">
+        <h1>{{ editando ? 'Edição de' : 'Novo' }} Ordem de Tráfego</h1>
+      </div>
+      <div class="ui-g-6 ui-fluid" *ngIf="editando">
+          <h3 style="color: crimson">Número : {{ordem.codigo}}</h3>
+
+      </div>
+
+      <div class="ui-g-12 ui-fluid">
+        <label>Solicitante</label>
+        <input pInputText type="text" [(ngModel)]="ordem.solicitante" name="solicitante" required minlength="5" #solicitante="ngModel">
+        <app-message [control]="solicitante" error="required" text="Informe um solicitante"></app-message>
+        <app-message [control]="solicitante" error="minlength" text="Mínimo de  {{solicitante.errors?.minlength?.requiredLength}} caracteres"></app-message>
+      </div>
+
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Data solicitação</label>
+        <p-calendar name="solicitacao" dateFormat="dd/mm/yy" [inline]="false" [readonlyInput]="false" [showIcon]="true" [(ngModel)]="ordem.dataSolicitacao"
+          #solicitacao="ngModel" required [monthNavigator]="true" [yearNavigator]="true" yearRange="2018:2040" [locale]="pt"></p-calendar>
+        <app-message [control]="solicitacao" error="required" text="Informe a solicitacao"></app-message>
+      </div>
+
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Veiculo</label>
+        <p-autoComplete [(ngModel)]="ordem.veiculo" name="veiculo" [suggestions]="veiculos" (completeMethod)="pesquisaVeiculos($event)" field="placa" [size]="30"
+          placeholder="Veiculo" [minLength]="2"></p-autoComplete>
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Motorista</label>
+        <p-autoComplete [(ngModel)]="ordem.condutor" name="motorista" [suggestions]="condutores" (completeMethod)="pesquisaCondutores($event)" field="nome" [size]="30"
+          placeholder="Motorista" [minLength]="3"></p-autoComplete>
+      </div>
+      <div class="ui-g-12 ui-md-6 ui-fluid">
+        <label>Status</label>
+        <p-dropdown [options]="status" placeholder="Selecione" name="status" [(ngModel)]="ordem.ativo" [autoWidth]="false"
+          [filter]="true" required></p-dropdown>
+      </div>
+      <div class="ui-g-12 ui-fluid">
+          <label>Observação</label>
+          <textarea pInputTextarea rows="3" name="observacao" [(ngModel)]="ordem.observacao"></textarea>
+      </div>
+      <div class="ui-g-12">
+        <p-panel header="Rotas">
+          <app-ordem-cadastro-rota [rotas]="ordem.rotas" [solicitacao]="ordem.dataSolicitacao"></app-ordem-cadastro-rota>
+        </p-panel>
+      </div>
+      <div class="ui-g-12">
+        <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid"></button>
+        <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+        <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/ordem-trafegos" [disabled]="!auth.temPermissao('ROLE_PESQUISAR_VEICULOS_CONDUTOR')"></button>
+        <button pButton type="button" icon="fa-print" label="Relatório" [disabled]="!editando" (click)="gerar()"></button>
+      </div>
+    </div>
+  </form>
+</div>

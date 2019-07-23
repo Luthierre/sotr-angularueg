@@ -1,0 +1,26 @@
+<div class="container">
+    <form #f="ngForm" autocomplete="off"  (ngSubmit)="salvar(f)">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <h1>{{ editando ? 'Edição de' : 'Novo' }} Departamento</h1>
+        </div>
+
+        <div class="ui-g-12 ui-fluid">
+          <label>Descrição</label>
+          <input pInputText type="text" name="descricao" [(ngModel)]="departamento.descricao" #desc="ngModel" required minlength="5">
+          <app-message [control]="desc" error="required" text="Informe uma descricao"></app-message>
+          <app-message [control]="desc" error="minlength" text="Mínimo de  {{desc.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-12">
+            <button pButton type="submit" label="Salvar" icon="fa-check" [disabled]="f.invalid" ></button>
+          <button pButton type="button" label="Novo" icon="fa-plus" class="ui-button-success" (click)="novo(f)"></button>
+          <button pButton type="button" label="Pesquisar" icon="fa-search" class="ui-button-info" routerLink="/departamentos"
+            [disabled]="!auth.temPermissao('ROLE_PESQUISAR_DEPARTAMENTO')"></button>
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>

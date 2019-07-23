@@ -1,0 +1,54 @@
+<div class="container">
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <h1>{{auth.jwtPayload?.nome}}, bem vindo </h1>
+    </div>
+
+    <div class="ui-g-4 ui-md-4 " *ngIf="auth.temPermissao('ROLE_DASHBOARD_AGENDA')">
+        <p-card title="Agenda" styleClass="ui-card-shadow" >
+            <div>Pesquisa, edição e cadastro de contatos e departamentos</div>
+            <p-footer>
+                <button pButton type="button" pTooltip="Pesquisar departamentos"
+                  tooltipPosition="top" label="Agenda" icon="fa-calendar"
+                  class="ui-button-success" routerLink="/agenda"></button>
+            </p-footer>
+        </p-card>
+    </div>
+    <div class="ui-g-4 ui-md-4" *ngIf="auth.temPermissao('ROLE_DASHBOARD_VIAGEM')">
+        <p-card title="Viagens" styleClass="ui-card-shadow">
+            <div>Pesquisa, edição e cadastro de veiculos, motoristas e ordem de tráfego</div>
+            <p-footer>
+                <button pButton type="button" pTooltip="Viagens"
+                  tooltipPosition="top" label="Viagens" icon="fa-bus"
+                  class="ui-button-warning" routerLink="/viagem"></button>
+
+            </p-footer>
+        </p-card>
+    </div>
+    <div class="ui-g-4 ui-md-4" *ngIf="auth.temPermissao('ADMINISTRADOR')">
+      <p-card title="Usuários" styleClass="ui-card-shadow">
+          <div>Pesquisa, edição e cadastro de usuários, para acessar o sistema</div>
+          <p-footer>
+              <button pButton type="button" pTooltip="Pesquisar usuários"
+                tooltipPosition="top" label="Pesquisar" icon="fa-search"
+                routerLink="/usuarios"></button>
+              <button pButton type="button" pTooltip="Cadastrar usuários"
+                tooltipPosition="top" label="Cadastrar" icon="fa-plus"
+                class="ui-button-success" routerLink="/usuarios/novo"
+                *ngIf="auth.temPermissao('ROLE_CADASTRAR_USUARIO')"></button>
+          </p-footer>
+      </p-card>
+  </div>
+  <div class="ui-g-4 ui-md-4" *ngIf="auth.temPermissao('ADMINISTRADOR')">
+    <p-card title="Campus" styleClass="ui-card-shadow">
+      <div>Pesquisa, edição e cadastro dos campus</div>
+      <p-footer>
+        <button pButton type="button" pTooltip="Pesquisar campus" tooltipPosition="top" label="Pesquisar" icon="fa-fort-awesome" routerLink="/campus"></button>
+        <button pButton type="button" pTooltip="Cadastrar campus" tooltipPosition="top" label="Cadastrar" icon="fa-plus" class="ui-button-success"
+          routerLink="/campus/novo"></button>
+      </p-footer>
+    </p-card>
+  </div>
+  </div>
+</div>
+

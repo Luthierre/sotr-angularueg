@@ -1,0 +1,195 @@
+<div class="ui-g">
+  <div class="ui-g-12">
+    <button pButton label="Nova Rota" icon="fa-plus" type="button" class="ui-button-secondary" (click)="prepararRota()"></button>
+  </div>
+
+  <div class="ui-g-12">
+    <p-table [value]="rotas" [responsive]="true" dataKey="kmSaida" [columns]="cols" #tabela>
+      <ng-template pTemplate="caption">
+        Rotas(itinerários)
+      </ng-template>
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th style="width: 2.25em"></th>
+          <th colspan="3">Origem</th>
+          <th colspan="3">Destino</th>
+          <th rowspan="2" class="col-acoes-header">Ações</th>
+        </tr>
+        <tr>
+          <th></th>
+            <th *ngFor="let col of columns">
+                {{col.header}}
+            </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rota let-rowIndex="rowIndex" let-expanded="expanded">
+        <tr>
+          <td>
+              <a href="javascript:;" [pRowToggler]="rota">
+                  <i [ngClass]="expanded ? 'fa fa-fw fa-chevron-circle-down' : 'fa fa-fw fa-chevron-circle-right'"></i>
+              </a>
+          </td>
+          <td class="col-nome">{{ rota.localSaida }}</td>
+          <td>{{ rota.dataSaida | date: 'dd/MM/yyyy'}}</td>
+
+          <td class="col-numero-centro">{{ rota.kmSaida | number}}</td>
+          <td class="col-nome">{{ rota.localChegada }}</td>
+          <td>{{ rota.dataChegada | date: 'dd/MM/yyyy'}}</td>
+
+          <td class="col-numero-centro">{{ rota.kmChegada | number}}</td>
+
+
+          <td class="col-acoes">
+            <button pButton icon="fa-pencil" type="button" pTooltip="Editar" tooltipPosition="top" (click)="prepararEdicaoRota(rota, rowIndex)"></button>
+
+            <button pButton icon="fa-trash" type="button" pTooltip="Excluir" tooltipPosition="top" (click)="removerRota(rowIndex)"></button>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="rowexpansion" let-rota let-columns="columns">
+          <tr>
+              <td [attr.colspan]="columns.length + 1">
+                  <div class="ui-g ui-fluid" style="font-size:16px;padding:5px">
+                      <div class="ui-g-12 ui-md-12">
+                          <div class="ui-g">
+                              <div class="ui-g-12">
+                                  <b>Hora saida:</b> {{rota.horaSaida}}
+                              </div>
+                              <div class="ui-g-12">
+                                  <b>Hora chegada:</b> {{rota.horaChegada}}
+                              </div>
+                              <div class="ui-g-12">
+                                  <b>Nome:</b> {{rota.nome}}
+                              </div>
+                              <div class="ui-g-12">
+                                  <b>Serviço:</b> {{rota.servico}}
+                              </div>
+                              <div class="ui-g-12">
+                                  <b>Km percorrido:</b> {{rota.kmPercorrido}}
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </td>
+          </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="8">
+            Nenhuma rota cadastrada
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+<p-dialog [header]="editando ? 'Edição Rota' : 'Nova Rota'" [(visible)]="exibindoFormularioRotas" [modal]="true" [responsive]="true"
+  [width]="860" [minWidth]="860" [minY]="40">
+  <form #frmRota="ngForm" autocomplete="off" (ngSubmit)="confirmarRota(frmRota)">
+    <div class="ui-g-12">
+      <p-fieldset>
+        <p-header>Origem</p-header>
+
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Local saída</label>
+          <input pInputText type="text" name="localSaida" required minlength="5" [(ngModel)]="rota.localSaida" #localSaida="ngModel"
+            placeholder="Local da saída" [disabled]="!editandoRotaZero" />
+
+          <app-message [control]="localSaida" error="required" text="Informe o local de saída"></app-message>
+          <app-message [control]="localSaida" error="minlength" text="Mínimo de  {{localSaida.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Data saída</label>
+          <p-calendar dateFormat="dd/mm/yy" required [(ngModel)]="rota.dataSaida" name="saida" #dataSaida="ngModel"
+          [minDate]="solicitacao"></p-calendar>
+          <app-message [control]="dataSaida" error="required" text="Informe a saída"></app-message>
+        </div>
+
+        <div class="ui-g-2 ui-md-2 ui-fluid">
+          <label>Hora saída</label>
+          <p-inputMask mask="99:99" name="horaSaida" [(ngModel)]="rota.horaSaida" required #horaSaida="ngModel"
+            placeholder="00:00">
+          </p-inputMask>
+          <app-message [control]="horaSaida" error="required" text="Informe a hora "></app-message>
+        </div>
+
+
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Km saída</label>
+          <input type="text" pInputText pKeyFilter="int" placeholder="Quilometragem Saída" name="kmSaida" [(ngModel)]="rota.kmSaida"
+            required #kmSaida="ngModel" minlength="1" maxlength="6" [disabled]="!editandoRotaZero" />
+          <app-message [control]="kmSaida" error="required" text="Informe a quilometragem da saída"></app-message>
+          <app-message [control]="kmSaida" error="minlength" text="Mínimo de  {{kmSaida.errors?.minlength?.requiredLength}} caracteres"></app-message>
+          <app-message [control]="kmSaida" error="maxlength" text="Máximo de  {{kmSaida.errors?.maxlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+      </p-fieldset>
+    </div>
+    <div class="ui-g-12">
+      <p-fieldset>
+        <p-header>Destino</p-header>
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Local chegada</label>
+          <input pInputText type="text" name="localChegada" required minlength="5" [(ngModel)]="rota.localChegada" #localChegada="ngModel"
+            placeholder="Local da chegada" />
+          <app-message [control]="localChegada" error="required" text="Informe o local de chegada"></app-message>
+          <app-message [control]="localChegada" error="minlength" text="Mínimo de  {{localChegada.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Data chegada</label>
+          <p-calendar dateFormat="dd/mm/yy" required [(ngModel)]="rota.dataChegada" name="chegada" #dataChegada="ngModel"
+          [minDate]="rota.dataSaida"></p-calendar>
+          <app-message [control]="dataChegada" error="required" text="Informe a chegada"></app-message>
+        </div>
+
+        <div class="ui-g-2 ui-md-2 ui-fluid">
+          <label>Hora chegada</label>
+          <p-inputMask mask="99:99" name="horaChegada" [(ngModel)]="rota.horaChegada" required #horaChegada="ngModel" placeholder="00:00">
+          </p-inputMask>
+          <app-message [control]="horaChegada" error="required" text="Informe a hora "></app-message>
+        </div>
+
+        <div class="ui-g-4 ui-md-4 ui-fluid">
+          <label>Km chegada</label>
+          <input type="text" pInputText pKeyFilter="int" placeholder="Quilometragem Entrada" name="kmChegada" [(ngModel)]="rota.kmChegada"
+            required #kmChegada="ngModel" minlength="1" maxlength="6" />
+          <app-message [control]="kmChegada" error="required" text="Informe a quilometragem da chegada"></app-message>
+          <app-message [control]="kmChegada" error="minlength" text="Mínimo de  {{kmChegada.errors?.minlength?.requiredLength}} caracteres"></app-message>
+          <app-message [control]="kmChegada" error="maxlength" text="Máximo de  {{kmChegada.errors?.maxlength?.requiredLength}} caracteres"></app-message>
+        </div>
+      </p-fieldset>
+    </div>
+    <div class="ui-g-12">
+      <p-fieldset>
+        <p-header>informações complementares</p-header>
+        <div class="ui-g-12 ui-md-12 ui-fluid">
+          <label>Nome</label>
+          <input pInputText type="text" name="nome" required minlength="5" [(ngModel)]="rota.nome" #nome="ngModel" />
+          <app-message [control]="nome" error="required" text="Informe o nome"></app-message>
+          <app-message [control]="nome" error="minlength" text="Mínimo de  {{nome.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+        <div class="ui-g-12 ui-md-12 ui-fluid">
+          <label>Serviço a executar</label>
+          <input pInputText type="text" name="servico" required minlength="5" [(ngModel)]="rota.servico" #servico="ngModel" />
+          <app-message [control]="servico" error="required" text="Informe o servico"></app-message>
+          <app-message [control]="servico" error="minlength" text="Mínimo de  {{servico.errors?.minlength?.requiredLength}} caracteres"></app-message>
+        </div>
+      </p-fieldset>
+    </div>
+
+    <p-footer>
+      <button type="submit" pButton icon="fa-check" label="Salvar" [disabled]="frmRota.invalid"></button>
+      <button type="button" pButton icon="fa-close" (click)="fecharDialogRota(frmRota)" label="Cancelar"></button>
+    </p-footer>
+  </form>
+</p-dialog>
+<p-dialog header="Serviços" [(visible)]="exibindoServicoRotas" [modal]="true" [responsive]="true" [width]="860" [minWidth]="860"
+  [minY]="40">
+  <p-fieldset legend="Informação">
+    {{rota.servico}}
+  </p-fieldset>
+</p-dialog>
